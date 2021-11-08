@@ -1,0 +1,32 @@
+﻿@page
+@model HellTwitchVipApp.Areas.Identity.Pages.TwitchAuthModel
+@{
+    ViewData["Title"] = "Авторизация";
+}
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="card-px text-center py-5 my-5">
+            <div class="symbol symbol-125px symbol-circle">
+                <div class="symbol-label" style="background-image:url(@Model.Input.ImageUrl)"></div>
+            </div>
+            <h2 class="fs-2x fw-bolder mb-10">Привет @Model.Input.DisplayName!</h2>
+            <p class="text-gray-400 fs-4 fw-bold mb-6">
+                Подождите, осталось совсем немного.
+                <br />
+                Скоро Вы будете перенаправлены на главную страницу.
+            </p>
+        </div>
+        <div class="text-center px-4 mb-6">
+            <img class="mw-100 mh-300px" alt="" src="~/assets/media/illustrations/sketchy-1/2.png">
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    window.setTimeout(function(){
+        window.location.href = "/Givers";
+    }, 1000);
+</script>
+}

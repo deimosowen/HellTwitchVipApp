@@ -1,0 +1,56 @@
+﻿@model HellTwitchVipApp.Models.Dto.GiverDto
+
+<div class="modal-dialog">
+    <div class="modal-content" id="giver-modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Добавление пользователя</h5>
+
+            <!--begin::Close-->
+            <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                <span class="svg-icon svg-icon-2x"></span>
+            </div>
+            <!--end::Close-->
+        </div>
+
+        <div class="modal-body">
+            <form asp-action="CreateGiver" asp-controller="Home" method="post" id="giver-save-form">
+                <input asp-for="Id" type="hidden" />
+                <div class="input-group input-group-solid mb-5">
+                    <span class="input-group-text" id="basic-addon1">@@</span>
+                    <input asp-for="Name" required type="text" class="form-control" placeholder="Пользователь" aria-label="Пользователь" aria-describedby="basic-addon1" />
+                </div>
+
+                <label for="basic-url" class="form-label">Подарочных подписок</label>
+                <div class="input-group input-group-solid mb-5">
+                    <input asp-for="Count" required type="number" class="form-control" placeholder="1" aria-describedby="basic-addon2" />
+                </div>
+            @*    @if (Model.Id != Guid.Empty)
+                {
+                    <div class="form-check form-switch form-check-custom form-check-solid">
+                        <input class="form-check-input" asp-for="IsVip" type="checkbox" value="true" />
+                        <input asp-for="IsVip" type="hidden" value="false" />
+                        <label class="form-check-label" asp-for="IsVip">
+                            VIP?
+                        </label>
+                    </div>
+                }*@
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" form="giver-save-form" class="btn btn-success">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var button = document.querySelector("#giver-save-form"),
+    target = document.querySelector("#giver-modal-content"),
+    blockUI = new KTBlockUI(target, {
+        message: '<div class="blockui-message"><span class="spinner-border text-primary"></span> Сохраняем...</div>',
+    });
+    button.addEventListener("submit", function(e) {
+        blockUI.block();
+    });
+</script>
