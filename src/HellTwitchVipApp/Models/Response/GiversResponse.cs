@@ -15,7 +15,7 @@ namespace HellTwitchVipApp.Models.Response
         private IEnumerable<GiverDto> AllGivers { get; }
         public IEnumerable<GiverDto> VipGivers { get; }
         public IEnumerable<GiverDto> WithoutVipGivers { get; }
-        public bool IsAdmin { get; private set; } = false;
+        public bool IsAdmin { get; private set; }
         public void Admin() => IsAdmin = true;
     }
 }

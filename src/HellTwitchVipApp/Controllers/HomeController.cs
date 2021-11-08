@@ -59,7 +59,7 @@ namespace HellTwitchVipApp.Controllers
             return View(request);
         }
 
-        [Authorize(IdentityRoles.Admin)]
+        [Authorize(Roles = IdentityRoles.Admin)]
         [HttpGet]
         public IActionResult CreateGiverModal()
         {
@@ -67,7 +67,7 @@ namespace HellTwitchVipApp.Controllers
             return PartialView("_PartialCreateGiverModal", giver);
         }
 
-        [Authorize(IdentityRoles.Admin)]
+        [Authorize(Roles = IdentityRoles.Admin)]
         [HttpGet]
         public IActionResult UpdateGiverModal(Guid id)
         {
@@ -75,7 +75,7 @@ namespace HellTwitchVipApp.Controllers
             return PartialView("_PartialUpdateGiverModal", giver);
         }
 
-        [Authorize(IdentityRoles.Admin)]
+        [Authorize(Roles = IdentityRoles.Admin)]
         [HttpPost]
         public IActionResult CreateGiver(GiverDto dto)
         {
@@ -100,7 +100,7 @@ namespace HellTwitchVipApp.Controllers
             return RedirectToAction(nameof(Givers), new { status = (ActionStatus)transactionResult.Status });
         }
 
-        [Authorize(IdentityRoles.Admin)]
+        [Authorize(Roles = IdentityRoles.Admin)]
         [HttpPost]
         public IActionResult UpdateGiver(GiverDto dto)
         {
@@ -121,7 +121,7 @@ namespace HellTwitchVipApp.Controllers
             return RedirectToAction(nameof(Givers), new { status = (ActionStatus)transactionResult.Status });
         }
 
-        [Authorize(IdentityRoles.Admin)]
+        [Authorize(Roles = IdentityRoles.Admin)]
         [HttpPost]
         public IActionResult DeleteGiver(Guid id)
         {

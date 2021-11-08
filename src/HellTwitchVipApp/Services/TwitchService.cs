@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HellTwitchVipApp.Data.Concrete;
+using HellTwitchVipApp.Data.Entities.Models;
 using HellTwitchVipApp.Data.Repositories;
 using HellTwitchVipApp.Models.Response;
 using HellTwitchVipApp.Models.Settings;
@@ -18,6 +19,7 @@ using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
+using SubscriptionPlan = TwitchLib.Client.Enums.SubscriptionPlan;
 
 namespace HellTwitchVipApp.Services
 {
@@ -49,7 +51,6 @@ namespace HellTwitchVipApp.Services
 
         public string GetAuthorizationCodeUrl()
         {
-            
             return _twitchApi.Auth.GetAuthorizationCodeUrl(_twitchSettings.RedirectUri, 
                 new List<AuthScopes>
                 {
@@ -72,66 +73,70 @@ namespace HellTwitchVipApp.Services
 
         public async Task<TwitchLibUserResponse> GetUserInfo(string token, string login)
         {
-            var response = await _twitchApi.Helix.Users.GetUsersAsync(accessToken: token, logins: new List<string> { login });
-            return response.Users.Select(s=> new TwitchLibUserResponse(s)).FirstOrDefault();
+            var response =
+                await _twitchApi.Helix.Users.GetUsersAsync(accessToken: token, logins: new List<string> { login });
+            return response.Users.Select(s => new TwitchLibUserResponse(s)).FirstOrDefault();
         }
 
         public void Connect(string token)
         {
-            ConnectionCredentials credentials = new ConnectionCredentials(_twitchSettings.BotSettings.UserName, _twitchSettings.BotSettings.OAuth, disableUsernameCheck: true);
-            
+            var credentials = new ConnectionCredentials(_twitchSettings.BotSettings.UserName,
+                _twitchSettings.BotSettings.OAuth, disableUsernameCheck: true);
+
             var clientOptions = new ClientOptions
             {
                 MessagesAllowedInPeriod = 750,
                 ThrottlingPeriod = TimeSpan.FromSeconds(30)
             };
-            WebSocketClient customClient = new WebSocketClient(clientOptions);
+            var customClient = new WebSocketClient(clientOptions);
             _twitchClient = new TwitchClient(customClient);
-            _twitchClient.Initialize(credentials, _twitchSettings.Channal);
+            _twitchClient.Initialize(credentials, _twitchSettings.Channel);
             _twitchClient.OnJoinedChannel += Client_OnJoinedChannel;
             _twitchClient.OnConnected += Client_OnConnected;
-            _twitchClient.OnMessageSent += Client_OnMessageSent;
-            _twitchClient.OnLog += Client_OnLog;
             _twitchClient.OnGiftedSubscription += Client_OnGiftedSubscription;
-            _twitchClient.OnContinuedGiftedSubscription += Client_OnContinuedGiftedSubscription;
             _twitchClient.Connect();
-            _twitchClient.JoinChannel(_twitchSettings.Channal);
-
+            _twitchClient.JoinChannel(_twitchSettings.Channel);
         }
 
-        private void Client_OnContinuedGiftedSubscription(object sender, OnContinuedGiftedSubscriptionArgs e)
+        private async void Client_OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
         {
-            _logger.LogInformation($"Sent message: {e.ContinuedGiftedSubscription.DisplayName}");
-        }
-
-        private void Client_OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
-        {
-            using (var scope = _scopeFactory.CreateScope())
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<HellAppContext>();
+            var giver = dbContext.GiftSubscriptionGivers.SingleOrDefault(s => string.Equals(s.UserName, e.GiftedSubscription.Login, StringComparison.CurrentCultureIgnoreCase));
+            if (giver is null)
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<HellAppContext>();
-                var giver = dbContext.GiftSubscriptionGivers.ToList();
+                await dbContext.GiftSubscriptionGivers.AddAsync(new GiftSubscriptionGiver()
+                {
+                    IsVip = false,
+                    UserName = e.GiftedSubscription.DisplayName,
+                    GiftCount = GetGiftValue(e.GiftedSubscription.MsgParamSubPlan),
+                });
             }
-            _logger.LogInformation($"Sent message: {e.GiftedSubscription.Login}");
+            else
+            {
+                giver.GiftCount += GetGiftValue(e.GiftedSubscription.MsgParamSubPlan);
+            }
+
+            await dbContext.SaveChangesAsync();
         }
 
-        private void Client_OnLog(object sender, OnLogArgs e)
+        private int GetGiftValue(SubscriptionPlan subscriptionPlan)
         {
-            //_logger.LogInformation($"{e.DateTime.ToString()}: {e.BotUsername} - {e.Data}");
+            return subscriptionPlan switch
+            {
+                SubscriptionPlan.Tier1 => _twitchSettings.GiftValue.Tier1,
+                SubscriptionPlan.Tier2 => _twitchSettings.GiftValue.Tier2,
+                SubscriptionPlan.Tier3 => _twitchSettings.GiftValue.Tier3,
+                _ => _twitchSettings.GiftValue.Tier1
+            };
         }
-        private void Client_OnMessageSent(object sender, OnMessageSentArgs e)
-        {
-            _logger.LogInformation($"Sent message: {e.SentMessage}");
-        }
-
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
             _logger.LogInformation($"Connected to {e.AutoJoinChannel}");
         }
-
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            _logger.LogInformation("Hey guys! I am a bot connected via TwitchLib!");
-           // _twitchClient.SendMessage(e.Channel, "Hey guys! I am a bot connected via TwitchLib!");
+            _logger.LogInformation("Hey guys!");
         }
     }
 }

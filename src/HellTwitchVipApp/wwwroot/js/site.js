@@ -69,3 +69,20 @@ $(document).on('click', '[data-toggle="modal"]',
             }
         });
     });
+$(document).on("click", "#kt_gift_information",
+    function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        Swal.fire({
+            html: "Для доступа в VipLand необходимо подарить <strong>15 сабок</strong></br><div class='d-flex align-items-center flex-column mt-2'>" +
+                "<li class='d-flex align-items-center py-1'><span class='bullet bullet-dot bg-info me-1'></span> Tier1 - 1 сабка</li>" +
+                "<li class='d-flex align-items-center py-1'><span class='bullet bullet-dot bg-info me-1'></span> Tier2 - 2 сабки</li>" +
+                "<li class='d-flex align-items-center py-1'><span class='bullet bullet-dot bg-info me-1'></span> Tier3 - 5 сабок</li></div>",
+            icon: "info",
+            buttonsStyling: false,
+            confirmButtonText: "Все понятно",
+            customClass: {
+                confirmButton: "btn btn-info"
+            }
+        });
+    });

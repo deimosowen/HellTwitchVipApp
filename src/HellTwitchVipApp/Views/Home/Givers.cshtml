@@ -12,76 +12,96 @@
         </h2>
         @if (Model.IsAdmin)
         {
-            <div class="ms-1">
-                <button class="btn btn-icon btn-sm btn-color-white btn-active-color-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
-                    <span class="svg-icon svg-icon-3hx">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="4" fill="black"></rect>
-                            <rect x="11" y="11" width="2.6" height="2.6" rx="1.3" fill="black"></rect>
-                            <rect x="15" y="11" width="2.6" height="2.6" rx="1.3" fill="black"></rect>
-                            <rect x="7" y="11" width="2.6" height="2.6" rx="1.3" fill="black"></rect>
-                        </svg>
-                    </span>
-                </button>
-                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-bold w-200px" data-kt-menu="true">
-                    <div class="menu-item px-3">
-                        <div class="menu-content fs-6 text-dark fw-bolder px-3 py-4">Действия</div>
-                    </div>
-                    <div class="separator mb-3 opacity-75"></div>
-                    <div class="menu-item px-3">
-                        <a asp-action="CreateGiverModal" class="menu-link px-3" data-toggle="modal">Добавить подписки</a>
-                    </div>
-                    <div class="separator mt-3 opacity-75"></div>
-                    <div class="menu-item px-3">
-                        <div class="menu-content px-3 py-3">
-                            <a class="btn btn-primary btn-sm px-4" href="#">Сменить месяц</a>
-                        </div>
+        <div class="ms-1">
+            <button class="btn btn-icon btn-sm btn-color-white btn-active-color-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
+                <span class="svg-icon svg-icon-3hx">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="4" fill="black"></rect>
+                        <rect x="11" y="11" width="2.6" height="2.6" rx="1.3" fill="black"></rect>
+                        <rect x="15" y="11" width="2.6" height="2.6" rx="1.3" fill="black"></rect>
+                        <rect x="7" y="11" width="2.6" height="2.6" rx="1.3" fill="black"></rect>
+                    </svg>
+                </span>
+            </button>
+            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-bold w-200px" data-kt-menu="true">
+                <div class="menu-item px-3">
+                    <div class="menu-content fs-6 text-dark fw-bolder px-3 py-4">Действия</div>
+                </div>
+                <div class="separator mb-3 opacity-75"></div>
+                <div class="menu-item px-3">
+                    <a asp-action="CreateGiverModal" class="menu-link px-3" data-toggle="modal">Добавить подписки</a>
+                </div>
+                <div class="separator mt-3 opacity-75"></div>
+                <div class="menu-item px-3">
+                    <div class="menu-content px-3 py-3">
+                        <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" title="В разработке">
+                            <button class="btn btn-primary btn-sm px-4 disabled" type="button" disabled>Сменить месяц</button>
+                        </span>
                     </div>
                 </div>
             </div>
+        </div>
         }
     </div>
     <div class="mb-3 mb-lg-3">
         <div class="me-n6 pe-6" id="kt_sidebar_body">
             <div class="timeline">
-                @foreach (var vip in Model.VipGivers)
+                @if (Model.VipGivers.Any())
                 {
-                    <div class="timeline-item">
-                        <div class="timeline-content mb-0">
-                            <div class="pb-5">
-                                <div class="d-flex flex-stack border rounded px-5 py-3">
-                                    <span class="bullet-dot bg-white me-2"></span>
-                                    <a href="@String.Format("https://www.twitch.tv/{0}", vip.Name)" target="_blank" class="fs-5 text-start text-white text-hover-success fw-bold w-375px">
-                                        @vip.Name
-                                        @if (vip.GetVipCount() >= 2)
-                                        {
-                                            <span class="position-absolute top-0 start-0 translate-middle badge badge-circle badge-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Количество Vip">@vip.GetVipCount()</span>
-                                        }
-                                    </a>
-                                    @if (Model.IsAdmin)
-                                    {
-                                        <a asp-action="UpdateGiverModal" asp-route-id="@vip.Id" data-toggle="modal" class="btn btn-sm btn-hover-rise text-white bg-info bg-opacity-75 d-flex flex-center">
-                                            <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
-                                            <div class="ps-1">@vip.Count</div>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a href="javascript:void(0);" class="bg-opacity-75 btn btn-sm cursor-default d-flex flex-center text-white">
-                                            <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
-                                            <div class="ps-1">@vip.Count</div>
-                                        </a>
-                                    }
-                                </div>
+                @foreach (var vip in Model.VipGivers)
+                    {
+                <div class="timeline-item">
+                    <div class="timeline-content mb-0">
+                        <div class="pb-5">
+                            <div class="d-flex flex-stack border rounded px-5 py-3">
+                                <span class="bullet-dot bg-white me-2"></span>
+                                <a href="@String.Format("https://www.twitch.tv/{0}", vip.Name)" target="_blank" class="fs-5 text-start text-white text-hover-success fw-bold w-375px">
+                                    @vip.Name
+                                    @if (vip.GetVipCount() >= 2)
+                                                {
+                                    <span class="position-absolute top-0 start-0 translate-middle badge badge-circle badge-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Количество Vip">@vip.GetVipCount()</span>
+                                                }
+                                </a>
+                                @if (Model.IsAdmin)
+                                            {
+                                <a asp-action="UpdateGiverModal" asp-route-id="@vip.Id" data-toggle="modal" class="btn btn-sm btn-hover-rise text-white bg-info bg-opacity-75 d-flex flex-center">
+                                    <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
+                                    <div class="ps-1">@vip.Count</div>
+                                </a>
+                                            }
+                                            else
+                                            {
+                                <a href="javascript:void(0);" class="bg-opacity-75 btn btn-sm cursor-default d-flex flex-center text-white">
+                                    <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
+                                    <div class="ps-1">@vip.Count</div>
+                                </a>
+                                            }
                             </div>
                         </div>
                     </div>
+                </div>
+                    }
+                }
+                else
+                {
+                <div class="timeline-item">
+                    <div class="timeline-content mb-0">
+                        <div class="pb-5">
+                            <div class="d-flex flex-stack border rounded px-5 py-3">
+                                <a href="#" class="cursor-default fs-5 fw-bold text-white w-375px">
+                                    Нет VIPов
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 }
             </div>
         </div>
     </div>
-
     <!-- Претенденты на vip -->
+    @if (Model.WithoutVipGivers.Any())
+    {
     <div class="d-flex flex-stack mb-3 mb-lg-5">
         <h2 class="text-white">
             Претенденты на VIP
@@ -93,40 +113,42 @@
             <div class="timeline">
                 @foreach (var vip in Model.WithoutVipGivers)
                 {
-                    <div class="timeline-item">
-                        <div class="timeline-content mb-0">
-                            <div class="pb-5">
-                                <div class="d-flex flex-stack border rounded px-5 py-3">
-                                    <span class="bullet-dot bg-white me-2"></span>
-                                    <a href="@String.Format("https://www.twitch.tv/{0}", vip.Name)" target="_blank" class="fs-5 text-start text-white text-hover-success fw-bold w-375px">
-                                        @if (vip.GetVipCount() > 0)
+                <div class="timeline-item">
+                    <div class="timeline-content mb-0">
+                        <div class="pb-5">
+                            <div class="d-flex flex-stack border rounded px-5 py-3">
+                                <span class="bullet-dot bg-white me-2"></span>
+                                <a href="@String.Format("https://www.twitch.tv/{0}", vip.Name)" target="_blank" class="fs-5 text-start text-white text-hover-success fw-bold w-375px">
+                                    @if (vip.GetVipCount() > 0)
                                         {
-                                            <span class="position-absolute top-0 start-0 translate-middle badge badge-circle badge-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Количество Vip">!</span>
+                                    <span class="position-absolute top-0 start-0 translate-middle badge badge-circle badge-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Ждет Vip">!</span>
                                         }
-                                        @vip.Name
-                                    </a>
-                                    @if (Model.IsAdmin)
+                                    @vip.Name
+                                </a>
+                                @if (Model.IsAdmin)
                                     {
-                                        <a asp-action="UpdateGiverModal" asp-route-id="@vip.Id" data-toggle="modal" class="btn btn-sm btn-hover-rise text-white bg-info bg-opacity-75 d-flex flex-center">
-                                            <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
-                                            <div class="ps-1">@vip.Count</div>
-                                        </a>
+                                <a asp-action="UpdateGiverModal" asp-route-id="@vip.Id" data-toggle="modal" class="btn btn-sm btn-hover-rise text-white bg-info bg-opacity-75 d-flex flex-center">
+                                    <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
+                                    <div class="ps-1">@vip.Count</div>
+                                </a>
                                     }
                                     else
                                     {
-                                        <a href="javascript:void(0);" class="bg-opacity-75 btn btn-sm cursor-default d-flex flex-center text-white">
-                                            <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
-                                            <div class="ps-1">@vip.Count</div>
-                                        </a>
+                                <a href="javascript:void(0);" class="bg-opacity-75 btn btn-sm cursor-default d-flex flex-center text-white">
+                                    <svg type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="" fill="white"><g><path fill-rule="evenodd" d="M16 6h2v6h-1v6H3v-6H2V6h2V4.793c0-2.507 3.03-3.762 4.803-1.99.131.131.249.275.352.429L10 4.5l.845-1.268a2.81 2.81 0 01.352-.429C12.969 1.031 16 2.286 16 4.793V6zM6 4.793V6h2.596L7.49 4.341A.814.814 0 006 4.793zm8 0V6h-2.596l1.106-1.659a.814.814 0 011.49.451zM16 8v2h-5V8h5zm-1 8v-4h-4v4h4zM9 8v2H4V8h5zm0 4H5v4h4v-4z" clip-rule="evenodd"></path></g></svg>
+                                    <div class="ps-1">@vip.Count</div>
+                                </a>
                                     }
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 }
             </div>
         </div>
     </div>
+    }
+
     <div class="text-center mb-2">
         <a href="https://www.twitch.tv/hellyeahplay" target="_blank" class="w-50 btn btn-hover-rise text-white bg-white bg-opacity-10 text-uppercase fs-7 fw-bolder">
             Перейти на стрим
@@ -138,7 +160,7 @@
     </div>
     <div class="text-center">
         <a href="https://www.donationalerts.com/r/deimosowen" target="_blank" class="w-50 btn btn-hover-rise text-white bg-white bg-opacity-10 text-uppercase fs-7 fw-bolder">
-            Сказать Спасибо
+            На кофе автору
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 37 43">
                 <defs>
                     <linearGradient id="a" x1="86.328%" x2="8.51%" y1="11.463%" y2="100%">
