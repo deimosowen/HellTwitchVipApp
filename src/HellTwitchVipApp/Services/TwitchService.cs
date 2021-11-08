@@ -102,7 +102,7 @@ namespace HellTwitchVipApp.Services
         {
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<HellAppContext>();
-            var giver = dbContext.GiftSubscriptionGivers.SingleOrDefault(s => string.Equals(s.UserName, e.GiftedSubscription.Login, StringComparison.CurrentCultureIgnoreCase));
+            var giver = dbContext.GiftSubscriptionGivers.SingleOrDefault(s => s.UserName.ToLower() == e.GiftedSubscription.Login.ToLower());
             if (giver is null)
             {
                 await dbContext.GiftSubscriptionGivers.AddAsync(new GiftSubscriptionGiver()

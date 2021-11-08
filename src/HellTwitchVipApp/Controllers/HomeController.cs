@@ -21,19 +21,16 @@ namespace HellTwitchVipApp.Controllers
         private readonly IGiverRepository _giverRepository;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(IGiverRepository giverRepository, 
             SignInManager<IdentityUser> signInManager, 
             UserManager<IdentityUser> userManager, 
-            RoleManager<IdentityRole> roleManager, 
             ILogger<HomeController> logger)
         {
             _giverRepository = giverRepository;
             _signInManager = signInManager;
             _userManager = userManager;
-            _roleManager = roleManager;
             _logger = logger;
         }
 
@@ -50,12 +47,11 @@ namespace HellTwitchVipApp.Controllers
             var givers = _giverRepository.GetAll();
             var request = new GiversResponse(givers);
 
-            if (_signInManager.IsSignedIn(User))
-            {
-                var user = await _userManager.GetUserAsync(User);
-                if (await _userManager.IsInRoleAsync(user, IdentityRoles.Admin))
-                    request.Admin();
-            }
+            if (!_signInManager.IsSignedIn(User)) return View(request);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (await _userManager.IsInRoleAsync(user, IdentityRoles.Admin))
+                request.Admin();
             return View(request);
         }
 
@@ -89,6 +85,7 @@ namespace HellTwitchVipApp.Controllers
 
             if (giver is null)
             {
+                dto.Name = dto.Name.Trim();
                 transactionResult = _giverRepository.Add(dto);
             }
             else

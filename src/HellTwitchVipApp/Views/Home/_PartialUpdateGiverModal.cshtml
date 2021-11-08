@@ -15,9 +15,10 @@
         <div class="modal-body">
             <form asp-action="UpdateGiver" asp-controller="Home" method="post" id="giver-save-form">
                 <input asp-for="Id" type="hidden" />
+                <input asp-for="Name" type="hidden" />
                 <div class="input-group input-group-solid mb-5">
                     <span class="input-group-text" id="basic-addon1">@@</span>
-                    <input asp-for="Name" required type="text" class="form-control" placeholder="Пользователь" aria-label="Пользователь" aria-describedby="basic-addon1" />
+                    <input value="@Model.Name" disabled="disabled" type="text" class="form-control" placeholder="Пользователь" aria-label="Пользователь" aria-describedby="basic-addon1" />
                 </div>
 
                 <label for="basic-url" class="form-label">Подарочных подписок</label>
