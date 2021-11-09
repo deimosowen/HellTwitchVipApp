@@ -54,7 +54,7 @@ namespace HellTwitchVipApp.Services
             return _twitchApi.Auth.GetAuthorizationCodeUrl(_twitchSettings.RedirectUri, 
                 new List<AuthScopes>
                 {
-                    AuthScopes.Channel_Read,
+                    AuthScopes.User_Read,
                 }, 
                 false, Guid.NewGuid().ToString(),
                 _twitchSettings.ClientSettings.Id);
