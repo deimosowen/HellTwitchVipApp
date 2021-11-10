@@ -10,6 +10,6 @@ namespace HellTwitchVipApp.Services
         Task<AuthCodeResponse> GetAccessTokenFromCodeAsync(string code);
         Task<ValidateAccessTokenResponse> ValidateAccessTokenAsync(string token);
         Task<TwitchLibUserResponse> GetUserInfo(string token, string login);
-        void Connect(string token);
+        void Connect();
     }
 }

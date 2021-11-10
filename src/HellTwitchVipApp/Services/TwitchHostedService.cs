@@ -17,7 +17,7 @@ namespace HellTwitchVipApp.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _twitchService.Connect("");
+            _twitchService.Connect();
             return Task.CompletedTask;
         }
 

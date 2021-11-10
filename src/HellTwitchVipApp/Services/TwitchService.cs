@@ -25,20 +25,23 @@ namespace HellTwitchVipApp.Services
 {
     public class TwitchService: ITwitchService
     {
-        // private readonly IGiverRepository _giverRepository;
-        //private readonly HellAppContext _context;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly TwitchAPI _twitchApi;
-        private TwitchClient _twitchClient;
-        private TwitchSettings _twitchSettings;
+        private readonly TwitchClient _twitchClient;
+        private readonly TwitchSettings _twitchSettings;
         private readonly ILogger<TwitchService> _logger;
-        public TwitchService(/*IGiverRepository giverRepository,*/ IServiceScopeFactory scopeFactory, IOptions<TwitchSettings> twitchSettings, ILogger<TwitchService> logger)
+
+        public TwitchService(IServiceScopeFactory scopeFactory, IOptions<TwitchSettings> twitchSettings,
+            ILogger<TwitchService> logger)
         {
-            // _giverRepository = giverRepository;
-            //_context = context;
             _scopeFactory = scopeFactory;
             _twitchSettings = twitchSettings.Value;
             _logger = logger;
+            _twitchClient = new TwitchClient(new WebSocketClient(new ClientOptions
+            {
+                MessagesAllowedInPeriod = 750,
+                ThrottlingPeriod = TimeSpan.FromSeconds(30)
+            }));
             _twitchApi = new TwitchAPI
             {
                 Settings =
@@ -51,12 +54,8 @@ namespace HellTwitchVipApp.Services
 
         public string GetAuthorizationCodeUrl()
         {
-            return _twitchApi.Auth.GetAuthorizationCodeUrl(_twitchSettings.RedirectUri, 
-                new List<AuthScopes>
-                {
-                    AuthScopes.User_Read,
-                }, 
-                false, Guid.NewGuid().ToString(),
+            return _twitchApi.Auth.GetAuthorizationCodeUrl(_twitchSettings.RedirectUri,
+                new List<AuthScopes> { AuthScopes.User_Read }, false, Guid.NewGuid().ToString(),
                 _twitchSettings.ClientSettings.Id);
         }
 
@@ -78,19 +77,10 @@ namespace HellTwitchVipApp.Services
             return response.Users.Select(s => new TwitchLibUserResponse(s)).FirstOrDefault();
         }
 
-        public void Connect(string token)
+        public void Connect()
         {
-            var credentials = new ConnectionCredentials(_twitchSettings.BotSettings.UserName,
-                _twitchSettings.BotSettings.OAuth, disableUsernameCheck: true);
-
-            var clientOptions = new ClientOptions
-            {
-                MessagesAllowedInPeriod = 750,
-                ThrottlingPeriod = TimeSpan.FromSeconds(30)
-            };
-            var customClient = new WebSocketClient(clientOptions);
-            _twitchClient = new TwitchClient(customClient);
-            _twitchClient.Initialize(credentials, _twitchSettings.Channel);
+            _twitchClient.Initialize(new ConnectionCredentials(_twitchSettings.BotSettings.UserName,
+                _twitchSettings.BotSettings.OAuth, disableUsernameCheck: true), _twitchSettings.Channel);
             _twitchClient.OnJoinedChannel += Client_OnJoinedChannel;
             _twitchClient.OnConnected += Client_OnConnected;
             _twitchClient.OnGiftedSubscription += Client_OnGiftedSubscription;
@@ -100,6 +90,7 @@ namespace HellTwitchVipApp.Services
 
         private async void Client_OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
         {
+            //TODO переделать, использовать Repository
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<HellAppContext>();
             var giver = dbContext.GiftSubscriptionGivers.SingleOrDefault(s => s.UserName.ToLower() == e.GiftedSubscription.Login.ToLower());
